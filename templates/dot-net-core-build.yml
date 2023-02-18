@@ -1,0 +1,47 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+parameters:
+  - name: solution
+    type: string
+
+# trigger:
+# - main
+# - pr
+
+job:
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  variables:
+    solution: ${{ parameters.solution }}'
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
+
+  steps:
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET SKD'
+    inputs: 
+      packageType: sdk
+      version: 6.0.406
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Restore'
+    inputs:
+      command: 'restore'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'build'
+    inputs:
+      solution: '$(solution)'
+      command: 'build'
+      arguments: '-c $(buildConfiguration) --no-restore'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Run tests'
+    inputs:
+      command: 'test'
+      arguments: '--collect:"XPlat Code Coverage" /p:exclude="*Tests.*"'
