@@ -11,7 +11,8 @@ parameters:
 # - main
 # - pr
 
-job:
+jobs:
+- job:
   pool:
     vmImage: 'ubuntu-latest'
 
